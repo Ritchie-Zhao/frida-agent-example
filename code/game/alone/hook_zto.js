@@ -1,5 +1,5 @@
 // version 10.07.2006121636
-// 请求
+// request
 function f() {
     Java.perform(function () {
         console.log("hook starting....")
@@ -13,7 +13,7 @@ function f() {
     })
 }
 
-// 响应
+// response
 function x() {
     Java.perform(function () {
         var ByteString = Java.use("com.android.okhttp.okio.ByteString");
@@ -30,8 +30,8 @@ function x() {
 
 
 function main() {
-    // x()
-    // f()
+    x()
+    f()
 }
 
 setImmediate(main)
