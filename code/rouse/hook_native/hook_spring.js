@@ -26,43 +26,30 @@ function hook_B90() {
 
     Interceptor.attach(addr_0xB90, {
         onEnter: function (args) {
+            // 参数1 输入的明文
             this.args0 = args[0]
+            // 参数2 明文的长度
             this.args1 = args[1]
+            // 参数3 are you sure 字符串
             this.args2 = args[2]
 
             console.log("calling addr_0xB90")
             console.log("args1:", hexdump(args[0]))
-            console.log("args2:", args[1])
+            console.log("args2:", args[1].toInt32())
             console.log("args3:", Memory.readCString(args[2]))
 
         },
         onLeave: function (retval) {
             console.log("now is retval")
             // 原文 30个1 16进制31 31 31 31 31 31 31-> 秘文 e0 6b 37 a1 75 d7 f6 d4 ef 19 c
+            // 此时数据已经改变
             console.log("args1:", hexdump(this.args0))
             console.log("args2:", this.args1)
             console.log("args3:", Memory.readCString(this.args2))
+            console.log("retval", retval.toInt32())
         }
     })
 }
-
-function hook_x0() {
-    // hook寄存器地址，得到对比的正确的base64
-    var libnative_addr = Module.findBaseAddress('libnative-lib.so');
-    console.log("so base address ->", libnative_addr)
-    var addr_0x8B0 = libnative_addr.add(0x8B0);
-    console.log("addr_0x8B0 ->", addr_0x8B0)
-    Interceptor.attach(addr_0x8B0, {
-        onEnter: function (args) {
-            // console.log(this.context.x2);
-            console.log(Memory.readByteArray(this.context.x0, 50));
-            // console.log(hexdump(this.c   ontext.x0));
-        },
-        onLeave: function (retval) {
-        }
-    })
-}
-
 
 function hook_D90() {
     var libnative_addr = Module.findBaseAddress('libnative-lib.so');
@@ -72,16 +59,41 @@ function hook_D90() {
 
     Interceptor.attach(addr_0xD90, {
         onEnter: function (args) {
-            this.args0 = args[0]
-            this.args1 = args[1]
-
             console.log("calling addr_0xD90")
+            this.args0 = args[0]
+            // 参数1 异或后的明文
             console.log("args0:", Memory.readByteArray(args[0], 30))
+            // 参数2 异或后的明文的长度
             console.log("args1:", args[1].toInt32())
 
         },
         onLeave: function (retval) {
-            console.log("now is retval", Memory.readCString(retval))
+            console.log("now is retval")
+            // base64加密明文后的结果
+            console.log("retval", Memory.readCString(retval))
+            // args0没有变化
+            console.log("args0", Memory.readByteArray(this.args0, 30))
+        }
+    })
+}
+
+function hook_x0() {
+    var libnative_addr = Module.findBaseAddress('libnative-lib.so');
+    console.log("so base address ->", libnative_addr)
+    var addr_0x8B0 = libnative_addr.add(0x8B0);
+    /*
+    inline hook 函数的参数寄存器地址，地址要写bl指令后面的函数地址，不能写寄存器的地址。
+    BL              sub_B90                             地址为0x8B0
+    ADD             X0, SP, #0xA0+palinText             地址为0x8B4
+    BL              .strlen
+    */
+    console.log("addr_0x8B0 ->", addr_0x8B0)
+    Interceptor.attach(addr_0x8B0, {
+        onEnter: function (args) {
+            console.log(Memory.readByteArray(this.context.x0, 50));
+            // console.log(hexdump(this.c   ontext.x0));
+        },
+        onLeave: function (retval) {
         }
     })
 }
@@ -166,4 +178,4 @@ function hook_D58() {
 }
 
 
-setImmediate(hook_x9_v2)
+setImmediate(hook_x0)
