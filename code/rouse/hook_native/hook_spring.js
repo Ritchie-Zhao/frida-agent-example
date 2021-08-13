@@ -9,11 +9,11 @@
 
 密钥 0x31 ^ 0xe0 以此类推
 
-from base64 import b64decode
-a = b64decode("5Gh2/y6Poq2/WIeLJfmh6yesnK7ndnJeWREFjRx8".encode()) -> 密文
-print(a)
-
-密文 ^ 密钥 = 明文
+import base64
+xordata = [0xd1,0x5a,0x6,0x90,0x44,0xe6,0xc7,0xe5,0xde,0x28,0xf7,0xf2,0x66,0x91,0xc8,0x85,0x42,0xdf,0xf9,0xe0,0x82,0x1,0x2b,0x3b,0x38,0x63,0x37,0xbd,0x2e,0x4d]
+data = base64.b64decode('5Gh2/y6Poq2/WIeLJfmh6yesnK7ndnJeWREFjRx8'.encode()) -> 秘文
+flag = bytes([xordata[i] ^ data[i] for i in range(len(xordata))]).decode()
+print(flag)
  */
 
 function inline_hook() {
@@ -206,8 +206,7 @@ function hook_D58() {
 
 function main() {
     hook_x9()
-    // hook_D58()
-    // inline_hook()
+    hook_D58()
 }
 
 
