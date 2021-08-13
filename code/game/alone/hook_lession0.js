@@ -65,8 +65,9 @@ function hook_update() {
                 // 参数0为存放结果的buffer指针，参数1为明文，参数2为明文的长度
                 console.log("function is enter");
                 this.buffer = args[0]
-                console.log("buffer:\n", hexdump(this.buffer, {length: args[2].toInt32()}))
-                console.log("args0:\n", Memory.readCString(args[1]));
+                console.log("buffer:\n", hexdump(this.buffer))
+                // 同readCString
+                console.log("args0:\n", Memory.readByteArray(args[1], args[2].toInt32()));
             },
             onLeave: function (retval) {
                 console.log("function is leaving");
