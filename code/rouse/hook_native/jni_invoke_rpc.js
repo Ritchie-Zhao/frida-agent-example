@@ -96,8 +96,6 @@ function invokemethod01(contents) {
         console.log("result is =>", result)
         console.log("result is ", Java.vm.getEnv().getStringUtfChars(result, null).readCString())
         result = Java.vm.getEnv().getStringUtfChars(result, null).readCString();
-
-
     })
     return result;
 }
