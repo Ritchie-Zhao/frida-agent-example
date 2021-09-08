@@ -1,32 +1,15 @@
 function hook_encode() {
     Java.perform(function x() {
-
-        Java.enumerateClassLoaders({
-            onMatch:function(loader){
-                try{
-                    if(loader.findClass("android.util.Base64")){
-                        console.log("Successfully found loader")
-                        console.log(loader);
-                        // 切换新的loder
-                        Java.classFactory.loader = loader ;
-                    }
-                }catch(error){
-                    console.log("find error:"+error)
-                }
-            },onComplete:function(){}
-        })
-
-        console.log("java perform");
         var Base64 = Java.use("android.util.Base64");
+        var ByteString = Java.use("com.android.okhttp.okio.ByteString");
         Base64.encodeToString.overload('[B', 'int').implementation = function (v1, v2) {
-            console.log("v1:" + bytesToString(v1));
+            console.log("v1:", ByteString.of(v1).utf8());
             console.log("v2:" + v2);
             var encry = this.encodeToString(v1, v2);
             console.log("encry:" + encry);
             return encry
         };
-      }
-    );
+    })
 }
 
 
@@ -38,20 +21,13 @@ function hook_sha1() {
             var st = this.SHA1ToString(s1);
             console.log("st:" + st);
             return st
-        };
-      }
-    );
+        }
+    })
 }
 
-function bytesToString(arr) {
-    var str = '';
-    arr = new Uint8Array(arr);
-    for (var i in arr) {
-        str += String.fromCharCode(arr[i]);
-    }
-    return str;
-
+function main() {
+    hook_sha1()
+    hook_encode()
 }
 
-
-setImmediate(hook_encode);
+setImmediate(main);
