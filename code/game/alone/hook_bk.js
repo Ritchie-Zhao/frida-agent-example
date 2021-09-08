@@ -30,8 +30,8 @@ function hook_sha1() {
 }
 
 function main() {
-    hook_sha1()
     hook_encode()
+    hook_sha1()
 }
 
 setImmediate(main);
